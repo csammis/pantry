@@ -29,7 +29,7 @@ units: dict[str, Unit] = {
 }
 
 
-@blp.route("/unit/<string:unit_id>")
+@blp.route("/api/unit/<string:unit_id>")
 class UnitEndpoint(MethodView):
     @blp.response(200, UnitSchema)
     def get(self, unit_id):
@@ -48,7 +48,7 @@ class UnitEndpoint(MethodView):
             abort(404)
 
 
-@blp.route("/unit")
+@blp.route("/api/unit")
 class UnitListEndpoint(MethodView):
     @blp.response(200, UnitSchema(many=True))
     def get(self):
