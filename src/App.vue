@@ -42,11 +42,10 @@ function showElement(navItem: NavMenuItem) {
 </script>
 
 <template>
-  <div id="main">
-    <header>
-      <h1>Pantry</h1>
-      <h3>Where is all my food please</h3>
-    </header>
+  <div class="banner">
+    <header>Pantry</header>
+  </div>
+  <div class="main">
     <main>
       <Slide>
         <span class="nav-menu-item" v-for="item in navMenu" :key="item.name">
@@ -62,13 +61,19 @@ function showElement(navItem: NavMenuItem) {
 </template>
 
 <style scoped>
+.banner {
+  position: absolute;
+  top: 24px;
+  padding-left: 4em;
+}
+
 header {
-  line-height: 1.5;
-  text-align: center;
+  font-size: 2em;
 }
 
 .main {
-  padding-left: 3em;
+  padding-top: 4em;
+  padding-left: 4em;
 }
 
 .logo {
