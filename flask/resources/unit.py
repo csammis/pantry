@@ -1,4 +1,4 @@
-"""Routes and blueprints and whatever"""
+"""Routes and blueprints for quantity units"""
 
 # pylint: disable=missing-class-docstring, missing-function-docstring, import-error
 
@@ -9,12 +9,12 @@ from schemas import UnitSchema
 from flask import abort
 from flask.views import MethodView
 
-blp = Blueprint("units", __name__, "Units of measure (cups, pints, loaves, etc.)")
+blp = Blueprint("units", __name__, "Units of quantity (cups, pints, loaves, etc.)")
 
 
 @dataclass
 class Unit:
-    """ORM representation of a unit of measure (cup, pint, loaf)"""
+    """ORM representation of a unit of quantity (cup, pint, loaf)"""
 
     id: str
     name: str

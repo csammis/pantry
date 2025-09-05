@@ -3,6 +3,7 @@ Flask REST server for pantry
 """
 
 from resources.unit import blp as UnitBlueprint
+from resources.location import blp as LocationBlueprint
 from flask_smorest import Api
 from flask import Flask
 
@@ -16,6 +17,7 @@ app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-
 api = Api(app)
 
 api.register_blueprint(UnitBlueprint)
+api.register_blueprint(LocationBlueprint)
 
 if __name__ == "__main__":
     app.run(debug=True)

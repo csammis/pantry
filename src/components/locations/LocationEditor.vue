@@ -2,11 +2,11 @@
 import { ref } from 'vue'
 import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiContentSaveOutline, mdiCloseBoxOutline, mdiSquareEditOutline } from '@mdi/js'
-import { Unit } from '@/models/unit'
+import { Location } from '@/models/location'
 
 const props = defineProps({
-  unit: {
-    type: Unit,
+  location: {
+    type: Location,
     required: true,
   },
 })
@@ -29,8 +29,20 @@ function updateEditState() {
 </script>
 <template>
   <div class="row unit-editor">
-    <input type="text" :disabled="!editing" placeholder="Unit name" :value="props.unit.name" />
-    <input type="text" :disabled="!editing" placeholder="Plural name" :value="props.unit.plural" />
+    <input
+      type="text"
+      :disabled="!editing"
+      placeholder="Location name"
+      :value="props.location.name"
+    />
+    <input
+      type="text"
+      :disabled="!editing"
+      placeholder="Icon (mdi:)"
+      :value="props.location.icon"
+    />
+    <span><em>Freezer?</em></span>
+    <input type="checkbox" :disabled="!editing" :value="props.location.is_freezer" />
     <button v-if="editing" class="svgBtn saveBtn" @click="save">
       <svg-icon type="mdi" :path="mdiContentSaveOutline" />
     </button>
