@@ -26,8 +26,8 @@ class Location:
 
 
 locations: dict[str, Location] = {
-    "1": Location("1", "Fridge", "mdi:fridge"),
-    "2": Location("2", "Freezer", "mdi:snowflake"),
+    "1": Location("1", "Fridge", "fridge"),
+    "2": Location("2", "Freezer", "snowflake", is_freezer=True),
 }
 
 

@@ -42,7 +42,7 @@ function updateEditState() {
       :value="props.location.icon"
     />
     <span><em>Freezer?</em></span>
-    <input type="checkbox" :disabled="!editing" :value="props.location.is_freezer" />
+    <input type="checkbox" :disabled="!editing" :checked="props.location.is_freezer" />
     <button v-if="editing" class="svgBtn saveBtn" @click="save">
       <svg-icon type="mdi" :path="mdiContentSaveOutline" />
     </button>
