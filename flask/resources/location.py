@@ -4,6 +4,7 @@
 
 from dataclasses import dataclass, field
 import datetime as dt
+import uuid
 from flask_smorest import Blueprint
 from schemas import LocationSchema
 from flask import abort
@@ -52,9 +53,33 @@ class LocationEndpoint(MethodView):
         except KeyError:
             abort(404)
 
+    def delete(self, location_id):
+        try:
+            del locations[location_id]
+            return {"message": "Location deleted"}
+        except KeyError:
+            abort(404)
+
 
 @blp.route("/api/location")
 class LocationListEndpoint(MethodView):
     @blp.response(200, LocationSchema(many=True))
     def get(self):
         return locations.values()
+
+    @blp.arguments(LocationSchema)
+    @blp.response(201, LocationSchema)
+    def post(self, data):
+        for _, location in locations.items():
+            if location.name == data["name"]:
+                abort(400)
+
+        new_id = uuid.uuid4().hex
+        location = Location(
+            id=new_id,
+            name=data["name"],
+            icon=data["icon"],
+            is_freezer=data["is_freezer"],
+        )
+        locations[new_id] = location
+        return location

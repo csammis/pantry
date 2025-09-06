@@ -38,14 +38,27 @@ export function createBlankLocation(): Location {
   return new Location('', '', '', false)
 }
 
-export async function storeLocation(location: Location) {
+export async function storeLocation(location: Location): Promise<Location | undefined> {
+  let method = 'POST'
+  let url = '/api/location'
   if (location.id !== '') {
-    await fetch('/api/location/' + location.id, {
-      method: 'PUT',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-      body: JSON.stringify(new LocationStore(location)),
-    })
+    method = 'PUT'
+    url = '/api/location/' + location.id
   }
+
+  const response = await fetch(url, {
+    method: method,
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify(new LocationStore(location)),
+  })
+  return (await response.json()) as Location
+}
+
+export async function deleteLocation(location: Location): Promise<boolean | undefined> {
+  const response = await fetch('/api/location/' + location.id, {
+    method: 'DELETE',
+  })
+  return response.ok
 }
