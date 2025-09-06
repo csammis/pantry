@@ -45,7 +45,10 @@ class LocationEndpoint(MethodView):
     def put(self, location_data, location_id):
         try:
             location = locations[location_id]
-            location |= location_data
+            location.name = location_data["name"]
+            location.icon = location_data["icon"]
+            location.is_freezer = location_data["is_freezer"]
+            return location
         except KeyError:
             abort(404)
 

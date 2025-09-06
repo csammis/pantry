@@ -19,5 +19,5 @@ class LocationSchema(Schema):
     id = fields.String(dump_only=True)
     name = fields.String(required=True)
     icon = fields.String()
-    created_at = fields.DateTime(load_default=dt.datetime.now())
+    created_at = fields.DateTime(dump_only=True, load_default=dt.datetime.now())
     is_freezer = fields.Boolean(load_default=False)

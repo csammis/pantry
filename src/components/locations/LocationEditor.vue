@@ -4,52 +4,66 @@ import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiContentSaveOutline, mdiCloseBoxOutline, mdiSquareEditOutline } from '@mdi/js'
 import { Location } from '@/models/location'
 
-const props = defineProps({
-  location: {
-    type: Location,
-    required: true,
-  },
-})
+const emit = defineEmits<{
+  (e: 'onSave', location: Location): void
+  (e: 'onCancel', location: Location): void
+}>()
 
+const model = defineModel<Location>({ required: true })
 const editing = ref(false)
 
 function cancel() {
-  //todo discard changes
+  emit('onCancel', model.value)
   updateEditState()
 }
 
 function save() {
-  //todo persist changes
+  emit('onSave', model.value)
   updateEditState()
 }
 
 function updateEditState() {
   editing.value = !editing.value
 }
+
+// Start out editing when a blank (no ID) item has been set
+editing.value = model.value.id === ''
+
+// Create DOM-unique names for the fields
+const locationNameFieldProp = 'location-name-' + model.value.id
+const locationIconFieldProp = 'location-icon-' + model.value.id
+const locationFreezerFieldProp = 'location-freezer-' + model.value.id
 </script>
 <template>
   <div class="row unit-editor">
     <input
       type="text"
+      :name="locationNameFieldProp"
       :disabled="!editing"
       placeholder="Location name"
-      :value="props.location.name"
+      v-model="model.name"
     />
     <input
       type="text"
+      :name="locationIconFieldProp"
       :disabled="!editing"
       placeholder="Icon (mdi:)"
-      :value="props.location.icon"
+      v-model="model.icon"
     />
     <span><em>Freezer?</em></span>
-    <input type="checkbox" :disabled="!editing" :checked="props.location.is_freezer" />
-    <button v-if="editing" class="svgBtn saveBtn" @click="save">
+    <input
+      type="checkbox"
+      :name="locationFreezerFieldProp"
+      :disabled="!editing"
+      v-model="model.is_freezer"
+    />
+    <button v-if="editing" class="svg-button save-button" @click="save">
       <svg-icon type="mdi" :path="mdiContentSaveOutline" />
     </button>
-    <button v-if="editing" class="svgBtn cancelBtn" @click="cancel">
+    <button v-if="editing" class="svg-button cancel-button" @click="cancel">
       <svg-icon type="mdi" :path="mdiCloseBoxOutline" />
     </button>
-    <button v-else class="svgBtn editBtn" @click="updateEditState">
+    <button v-else class="svg-button edit-button" @click="updateEditState">
       <svg-icon type="mdi" :path="mdiSquareEditOutline" />
     </button>
   </div>
@@ -77,24 +91,11 @@ function updateEditState() {
   border: 0px;
 }
 
-.svgBtn {
-  height: 24px;
-  width: 24px;
-  color: whitesmoke;
-  background-color: transparent;
-  border-radius: 3px;
-  filter: brightness(75%);
-}
-
-.svgBtn:hover {
-  filter: brightness(100%);
-}
-
-.cancelBtn {
+.cancel-button {
   background-color: firebrick;
 }
 
-.saveBtn {
+.save-button {
   background-color: darkgreen;
 }
 </style>

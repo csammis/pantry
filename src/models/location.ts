@@ -12,7 +12,40 @@ export class Location {
   }
 }
 
+class LocationStore {
+  public name: string
+  public icon: string
+  public is_freezer: boolean
+
+  public constructor(location: Location) {
+    this.name = location.name
+    this.icon = location.icon
+    this.is_freezer = location.is_freezer
+  }
+}
+
 export async function getLocations(): Promise<Location[]> {
   const response = await fetch('/api/location')
   return (await response.json()) as Location[]
+}
+
+export async function getLocation(id: string): Promise<Location | undefined> {
+  const response = await fetch('/api/location/' + id)
+  return (await response.json()) as Location
+}
+
+export function createBlankLocation(): Location {
+  return new Location('', '', '', false)
+}
+
+export async function storeLocation(location: Location) {
+  if (location.id !== '') {
+    await fetch('/api/location/' + location.id, {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(new LocationStore(location)),
+    })
+  }
 }

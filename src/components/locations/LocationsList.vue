@@ -1,10 +1,43 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import SvgIcon from '@jamescoyle/vue-icon'
+import { mdiPlusOutline } from '@mdi/js'
 import LocationEditor from './LocationEditor.vue'
-import { Location, getLocations } from '@/models/location'
+import {
+  Location,
+  getLocations,
+  getLocation,
+  createBlankLocation,
+  storeLocation,
+} from '@/models/location'
 
-const locations = ref<Location[]>()
+const locations = ref<Location[]>([])
 getLocations().then((response) => (locations.value = response))
+
+function addNew() {
+  // Only push a new one if there isn't already a blank item being filled in
+  if (locations.value.length > 0 && locations.value[locations.value.length - 1].id !== '') {
+    locations.value.push(createBlankLocation())
+  }
+}
+
+function onSave(location: Location) {
+  storeLocation(location)
+}
+
+function onCancel(location: Location) {
+  if (location.id === '') {
+    locations.value?.pop()
+  } else {
+    // Reload the item from the backend
+    getLocation(location.id).then(function (response) {
+      if (response !== undefined) {
+        const i = locations.value.indexOf(location)
+        locations.value[i] = response
+      }
+    })
+  }
+}
 </script>
 <template>
   <h2>Locations</h2>
@@ -21,12 +54,28 @@ getLocations().then((response) => (locations.value = response))
       <li><em>Freezer:</em> indicate if the location is freezer storage</li>
     </ul>
   </div>
-  <ul name="location-list" class="location-list" v-for="location in locations" :key="location.id">
-    <LocationEditor :location="location" />
-  </ul>
+  <LocationEditor
+    v-for="(location, index) in locations"
+    :key="location.id"
+    v-model="locations[index]"
+    v-on:on-save="onSave"
+    v-on:on-cancel="onCancel"
+  />
+  <div class="add-row">
+    <button class="svg-button create-button" @click="addNew">
+      <svg-icon type="mdi" :path="mdiPlusOutline" />
+    </button>
+    <span>Add new location</span>
+  </div>
 </template>
 <style lang="css" scoped>
 .description {
   margin-bottom: 2em;
+}
+
+.add-row > * {
+  margin-left: 0.5em;
+  display: inline-block;
+  vertical-align: middle;
 }
 </style>
