@@ -44,7 +44,7 @@ const unitNameFieldProp = 'unit-name-' + model.value.id
 const unitPluralFieldProp = 'unit-plural-' + model.value.id
 </script>
 <template>
-  <div class="row unit-editor">
+  <div class="item-editor">
     <input
       type="text"
       :name="unitNameFieldProp"
@@ -73,34 +73,3 @@ const unitPluralFieldProp = 'unit-plural-' + model.value.id
     </button>
   </div>
 </template>
-<style scoped>
-.row {
-  margin: 0.25em;
-  width: 100%;
-}
-
-.unit-editor > * {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.unit-editor > input {
-  margin-right: 0.5em;
-  margin-left: 0.5em;
-}
-
-.unit-editor > button {
-  margin-right: 0.25em;
-  margin-left: 0.25em;
-  padding: 0px;
-  border: 0px;
-}
-
-.cancel-button {
-  background-color: firebrick;
-}
-
-.save-button {
-  background-color: darkgreen;
-}
-</style>
