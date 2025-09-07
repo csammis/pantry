@@ -1,25 +1,35 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import SvgIcon from '@jamescoyle/vue-icon'
-import { mdiContentSaveOutline, mdiCloseBoxOutline, mdiSquareEditOutline } from '@mdi/js'
+import {
+  mdiContentSaveOutline,
+  mdiCloseBoxOutline,
+  mdiSquareEditOutline,
+  mdiTrashCanOutline,
+} from '@mdi/js'
 import { Location } from '@/models/location'
 
 const emit = defineEmits<{
   (e: 'onSave', location: Location): void
   (e: 'onCancel', location: Location): void
+  (e: 'onDelete', location: Location): void
 }>()
 
 const model = defineModel<Location>({ required: true })
 const editing = ref(false)
 
-function cancel() {
+function cancelItem() {
   emit('onCancel', model.value)
   updateEditState()
 }
 
-function save() {
+function saveItem() {
   emit('onSave', model.value)
   updateEditState()
+}
+
+function deleteItem() {
+  emit('onDelete', model.value)
 }
 
 function updateEditState() {
@@ -57,14 +67,17 @@ const locationFreezerFieldProp = 'location-freezer-' + model.value.id
       :disabled="!editing"
       v-model="model.is_freezer"
     />
-    <button v-if="editing" class="svg-button save-button" @click="save">
+    <button v-if="editing" class="svg-button save-button" @click="saveItem">
       <svg-icon type="mdi" :path="mdiContentSaveOutline" />
     </button>
-    <button v-if="editing" class="svg-button cancel-button" @click="cancel">
+    <button v-if="editing" class="svg-button cancel-button" @click="cancelItem">
       <svg-icon type="mdi" :path="mdiCloseBoxOutline" />
     </button>
-    <button v-else class="svg-button edit-button" @click="updateEditState">
+    <button v-if="!editing" class="svg-button edit-button" @click="updateEditState">
       <svg-icon type="mdi" :path="mdiSquareEditOutline" />
+    </button>
+    <button v-if="!editing" class="svg-button delete-button" @click="deleteItem">
+      <svg-icon type="mdi" :path="mdiTrashCanOutline" />
     </button>
   </div>
 </template>
