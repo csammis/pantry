@@ -1,44 +1,75 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import SvgIcon from '@jamescoyle/vue-icon'
-import { mdiContentSaveOutline, mdiCloseBoxOutline, mdiSquareEditOutline } from '@mdi/js'
+import {
+  mdiContentSaveOutline,
+  mdiCloseBoxOutline,
+  mdiSquareEditOutline,
+  mdiTrashCanOutline,
+} from '@mdi/js'
 import { Unit } from '@/models/unit'
 
-const props = defineProps({
-  unit: {
-    type: Unit,
-    required: true,
-  },
-})
+const emit = defineEmits<{
+  (e: 'onSave', unit: Unit): void
+  (e: 'onCancel', unit: Unit): void
+  (e: 'onDelete', unit: Unit): void
+}>()
 
+const model = defineModel<Unit>({ required: true })
 const editing = ref(false)
 
-function cancel() {
-  //todo discard changes
+function cancelItem() {
+  emit('onCancel', model.value)
   updateEditState()
 }
 
-function save() {
-  //todo persist changes
+function saveItem() {
+  emit('onSave', model.value)
   updateEditState()
+}
+
+function deleteItem() {
+  emit('onDelete', model.value)
 }
 
 function updateEditState() {
   editing.value = !editing.value
 }
+
+// Start out editing when a blank (no ID) item has been set
+editing.value = model.value.id === ''
+
+// Create DOM-unique names for the fields
+const unitNameFieldProp = 'unit-name-' + model.value.id
+const unitPluralFieldProp = 'unit-plural-' + model.value.id
 </script>
 <template>
   <div class="row unit-editor">
-    <input type="text" :disabled="!editing" placeholder="Unit name" :value="props.unit.name" />
-    <input type="text" :disabled="!editing" placeholder="Plural name" :value="props.unit.plural" />
-    <button v-if="editing" class="svgBtn saveBtn" @click="save">
+    <input
+      type="text"
+      :name="unitNameFieldProp"
+      :disabled="!editing"
+      placeholder="Unit name"
+      v-model="model.name"
+    />
+    <input
+      type="text"
+      :name="unitPluralFieldProp"
+      :disabled="!editing"
+      placeholder="Plural name"
+      v-model="model.plural"
+    />
+    <button v-if="editing" class="svg-button save-button" @click="saveItem">
       <svg-icon type="mdi" :path="mdiContentSaveOutline" />
     </button>
-    <button v-if="editing" class="svgBtn cancelBtn" @click="cancel">
+    <button v-if="editing" class="svg-button cancel-button" @click="cancelItem">
       <svg-icon type="mdi" :path="mdiCloseBoxOutline" />
     </button>
-    <button v-else class="svgBtn editBtn" @click="updateEditState">
+    <button v-if="!editing" class="svg-button edit-button" @click="updateEditState">
       <svg-icon type="mdi" :path="mdiSquareEditOutline" />
+    </button>
+    <button v-if="!editing" class="svg-button delete-button" @click="deleteItem">
+      <svg-icon type="mdi" :path="mdiTrashCanOutline" />
     </button>
   </div>
 </template>
@@ -65,24 +96,11 @@ function updateEditState() {
   border: 0px;
 }
 
-.svgBtn {
-  height: 24px;
-  width: 24px;
-  color: whitesmoke;
-  background-color: transparent;
-  border-radius: 3px;
-  filter: brightness(75%);
-}
-
-.svgBtn:hover {
-  filter: brightness(100%);
-}
-
-.cancelBtn {
+.cancel-button {
   background-color: firebrick;
 }
 
-.saveBtn {
+.save-button {
   background-color: darkgreen;
 }
 </style>

@@ -4,6 +4,7 @@
 
 from dataclasses import dataclass, field
 import datetime as dt
+import uuid
 from flask_smorest import Blueprint
 from schemas import UnitSchema
 from flask import abort
@@ -43,7 +44,16 @@ class UnitEndpoint(MethodView):
     def put(self, unit_data, unit_id):
         try:
             unit = units[unit_id]
-            unit |= unit_data
+            unit.name = unit_data["name"]
+            unit.plural = unit_data["plural"]
+            return unit
+        except KeyError:
+            abort(404)
+
+    def delete(self, unit_id):
+        try:
+            del units[unit_id]
+            return {"message": "Unit deleted"}
         except KeyError:
             abort(404)
 
@@ -53,3 +63,19 @@ class UnitListEndpoint(MethodView):
     @blp.response(200, UnitSchema(many=True))
     def get(self):
         return units.values()
+
+    @blp.arguments(UnitSchema)
+    @blp.response(201, UnitSchema)
+    def post(self, data):
+        for _, unit in units.items():
+            if unit.name == data["name"]:
+                abort(400)
+
+        new_id = uuid.uuid4().hex
+        unit = Unit(
+            id=new_id,
+            name=data["name"],
+            plural=data["plural"],
+        )
+        units[new_id] = unit
+        return unit

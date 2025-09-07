@@ -10,7 +10,7 @@ class UnitSchema(Schema):
     id = fields.String(dump_only=True)
     name = fields.String(required=True)
     plural = fields.String()
-    created_at = fields.DateTime(load_default=dt.datetime.now())
+    created_at = fields.DateTime(dump_only=True, load_default=dt.datetime.now())
 
 
 class LocationSchema(Schema):
