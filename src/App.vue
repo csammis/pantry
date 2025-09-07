@@ -4,8 +4,8 @@ import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiFridgeOutline, mdiCup, mdiHomeOutline, mdiDatabaseSettingsOutline } from '@mdi/js'
 import { Slide } from 'vue3-burger-menu'
 import HomeScreen from './components/HomeScreen.vue'
-import LocationsList from './components/locations/LocationsList.vue'
-import UnitsList from './components/units/UnitsList.vue'
+import LocationEditorList from './components/locations/LocationEditorList.vue'
+import UnitEditorList from './components/units/UnitEditorList.vue'
 
 interface NavMenuItem {
   icon: string
@@ -80,8 +80,8 @@ function showSettingsElement(navItem: NavMenuItem) {
         </div>
       </Slide>
       <HomeScreen v-if="navMenu[0].hidden == false" />
-      <UnitsList v-if="settingsMenu[0].hidden == false" />
-      <LocationsList v-if="settingsMenu[1].hidden == false" />
+      <UnitEditorList v-if="settingsMenu[0].hidden == false" />
+      <LocationEditorList v-if="settingsMenu[1].hidden == false" />
     </main>
   </div>
 </template>
