@@ -87,19 +87,16 @@ function showSettingsElement(navItem: NavMenuItem) {
 </template>
 
 <style scoped>
-.banner {
-  position: absolute;
-  top: 24px;
-  padding-left: 4em;
-}
-
 header {
   font-size: 2em;
+  position: absolute;
+  top: 24px;
+  padding-left: 2em;
 }
 
 .main {
-  padding-top: 4em;
   padding-left: 4em;
+  padding-top: 4em;
 }
 
 svg {
