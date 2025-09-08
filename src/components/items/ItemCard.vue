@@ -1,14 +1,30 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, render } from 'vue'
 import { Item } from '@/models/item'
 import LocationChip from '../locations/LocationChip.vue'
+import type { Unit } from '@/models/unit'
+import { makeSingularOrPlural } from '@/utilities/Pluralizer'
 
 defineProps<{ item: Item }>()
+
+function renderQuantity(unit?: Unit, quantity?: number): string {
+  if (unit === undefined && quantity === undefined) {
+    return ''
+  }
+  let name = 'item'
+  let plural = 'items'
+  if (unit !== undefined) {
+    name = unit.name.toLocaleLowerCase()
+    plural = unit.plural.toLocaleLowerCase()
+  }
+  const amount = quantity as number
+  return `${amount.toLocaleString()} ${makeSingularOrPlural(amount, name, plural)}`
+}
 </script>
 <template>
   <div class="item-card">
     <div class="item-card-name">{{ item.name }}</div>
-    <div class="item-card-quantity"></div>
+    <div class="item-card-quantity">{{ renderQuantity(item.unit, item.unit_quantity) }}</div>
     <div class="item-card-location">in <LocationChip :location="item.location" /></div>
   </div>
 </template>
