@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, render } from 'vue'
+import { defineProps } from 'vue'
 import { Item } from '@/models/item'
 import LocationChip from '../locations/LocationChip.vue'
 import type { Unit } from '@/models/unit'
