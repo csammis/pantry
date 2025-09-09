@@ -32,3 +32,5 @@ coverage
 # Python stuff
 .venv
 __pycache__
+
+*.db

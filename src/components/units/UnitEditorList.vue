@@ -12,7 +12,8 @@ getUnits().then((response) => (units.value = response))
 
 function addNew() {
   // Only push a new one if there isn't already a blank item being filled in
-  if (units.value.length > 0 && units.value[units.value.length - 1].id !== '') {
+  console.log(units.value.length)
+  if (units.value.length == 0 || units.value[units.value.length - 1].id !== '') {
     units.value.push(createBlankUnit())
   }
 }
