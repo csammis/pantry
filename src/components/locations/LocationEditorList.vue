@@ -19,7 +19,7 @@ getLocations().then((response) => (locations.value = response))
 
 function addNew() {
   // Only push a new one if there isn't already a blank item being filled in
-  if (locations.value.length > 0 && locations.value[locations.value.length - 1].id !== '') {
+  if (locations.value.length == 0 || locations.value[locations.value.length - 1].id !== '') {
     locations.value.push(createBlankLocation())
   }
 }

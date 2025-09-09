@@ -54,9 +54,9 @@ class UnitListEndpoint(MethodView):
         try:
             db.session.add(unit)
             db.session.commit()
+            return unit
         except IntegrityError:
             abort(400, message="Duplicate names are not allowed")
         except SQLAlchemyError as sae:
             print(sae)
             abort(500)
-        return unit
