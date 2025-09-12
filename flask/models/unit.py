@@ -1,16 +1,17 @@
-"""SQLAlchemy models for units"""
-
 # pylint: disable=missing-class-docstring, too-few-public-methods, import-error
 
+import datetime as dt
 import uuid
-from db import db
-from sqlalchemy import String, DateTime, Column
+from db import Base, Id
+from sqlalchemy import UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
 
 
-class UnitModel(db.Model):
+class UnitModel(Base):
     __tablename__ = "unit"
+    __table_args__ = (UniqueConstraint("name"),)
 
-    id: Column = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name: Column = Column(String(80), unique=True, nullable=False)
-    plural: Column = Column(String(80), nullable=True)
-    created_at: Column = Column(DateTime)
+    id: Mapped[Id] = mapped_column(primary_key=True, default=lambda: str(uuid.uuid4()))
+    name: Mapped[str]
+    plural: Mapped[str | None]
+    created_at: Mapped[dt.datetime] = mapped_column(default=lambda: dt.datetime.now())

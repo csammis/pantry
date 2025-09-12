@@ -6,7 +6,7 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from db import db
 from schemas import LocationSchema
-from models import LocationModel
+from models.location import LocationModel
 from flask.views import MethodView
 
 blp = Blueprint(
@@ -16,15 +16,27 @@ blp = Blueprint(
 
 @blp.route("/api/location/<string:location_id>")
 class LocationEndpoint(MethodView):
+    @classmethod
+    def get_or_404(cls, location_id: str) -> LocationModel:
+        """Get the specified Location or abort with a HTTP 404 error"""
+        location: LocationModel = (
+            db.session.query(LocationModel)
+            .filter(LocationModel.id == location_id)
+            .first()
+        )
+        if not location:
+            abort(404)
+        return location
+
     @blp.response(200, LocationSchema)
     def get(self, location_id):
-        return LocationModel.query.get_or_404(location_id)
+        return LocationEndpoint.get_or_404(location_id)
 
     @blp.arguments(LocationSchema)
     @blp.response(200, LocationSchema)
     def put(self, location_data, location_id):
         try:
-            location = LocationModel.query.get_or_404(location_id)
+            location = LocationEndpoint.get_or_404(location_id)
             location.name = location_data["name"]
             location.icon = location_data["icon"]
             location.is_freezer = location_data["is_freezer"]
@@ -36,7 +48,7 @@ class LocationEndpoint(MethodView):
 
     def delete(self, location_id):
         try:
-            location = LocationModel.query.get_or_404(location_id)
+            location = LocationEndpoint.get_or_404(location_id)
             db.session.delete(location)
             db.session.commit()
             return {"message": "Location deleted"}, 200
@@ -48,7 +60,7 @@ class LocationEndpoint(MethodView):
 class LocationListEndpoint(MethodView):
     @blp.response(200, LocationSchema(many=True))
     def get(self):
-        return LocationModel.query.all()
+        return db.session.query(LocationModel)
 
     @blp.arguments(LocationSchema)
     @blp.response(201, LocationSchema)

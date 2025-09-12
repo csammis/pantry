@@ -2,54 +2,40 @@
 
 # pylint: disable=missing-class-docstring, missing-function-docstring, import-error
 
-from dataclasses import dataclass, field
 import datetime as dt
-import uuid
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from schemas import ItemSchema
-from flask import abort
+from db import db
+from models.item import ItemModel
 from flask.views import MethodView
 
 blp = Blueprint("items", __name__, "Items stored in Pantry")
 
 
-@dataclass
-class Item:
-    """ORM representation of a stored item"""
-
-    id: str
-    name: str
-    location_id: str
-    unit_id: str | None = field(default=None)
-    unit_quantity: float | None = field(default=None)
-    created_at: dt.datetime = field(default_factory=dt.datetime.now)
-    modified_at: dt.datetime = field(default_factory=dt.datetime.now)
-    moved_at: dt.datetime = field(default_factory=dt.datetime.now)
-
-
-items: dict[str, Item] = {
-    "1": Item("1", "Ice Cream", "2", "1", "3"),
-    "2": Item("2", "Water", "1"),
-    "3": Item("3", "Frozen Pizza", "2", None, "2"),
-}
-
-
 @blp.route("/api/item/<string:item_id>")
 class ItemEndpoint(MethodView):
+    @classmethod
+    def get_or_404(cls, item_id: str) -> ItemModel:
+        """Get the specified Item or abort with a HTTP 404 error"""
+        item = db.session.query(ItemModel).filter(ItemModel.id == item_id).first()
+        if not item:
+            abort(404)
+        return item
+
     @blp.response(200, ItemSchema)
     def get(self, item_id):
-        try:
-            return items[item_id]
-        except KeyError:
-            abort(404)
+        return ItemEndpoint.get_or_404(item_id)
 
     @blp.arguments(ItemSchema)
     @blp.response(200, ItemSchema)
     def put(self, item_data, item_id):
         try:
-            item = items[item_id]
+            item = ItemEndpoint.get_or_404(item_id)
             item.name = item_data["name"]
-            item.location_id = item_data["location_id"]
+            if item.location_id != item_data["location_id"]:
+                item.location_id = item_data["location_id"]
+                item.moved_at = dt.datetime.now()
             item.unit_id = (
                 None if "unit_id" not in item_data else item_data["item_data"]
             )
@@ -57,15 +43,20 @@ class ItemEndpoint(MethodView):
                 None if "unit_quantity" not in item_data else item_data["unit_quantity"]
             )
             item.modified_at = dt.datetime.now()
+
+            db.session.add(item)
+            db.session.commit()
             return item
-        except KeyError:
-            abort(404)
+        except IntegrityError:
+            abort(400)
 
     def delete(self, item_id):
         try:
-            del items[item_id]
-            return {"message": "item deleted"}
-        except KeyError:
+            item = ItemEndpoint.get_or_404(item_id)
+            db.session.delete(item)
+            db.session.commit()
+            return {"message": "Item deleted"}, 200
+        except IntegrityError:
             abort(404)
 
 
@@ -73,20 +64,18 @@ class ItemEndpoint(MethodView):
 class ItemListEndpoint(MethodView):
     @blp.response(200, ItemSchema(many=True))
     def get(self):
-        return items.values()
+        return db.session.query(ItemModel)
 
     @blp.arguments(ItemSchema)
     @blp.response(201, ItemSchema)
     def post(self, data):
-        for _, item in items.items():
-            if item.name == data["name"]:
-                abort(400)
-
-        new_id = uuid.uuid4().hex
-        item = Item(id=new_id, name=data["name"], location_id=data["location_id"])
-        item.unit_id = None if "unit_id" not in data else data["item_data"]
-        item.unit_quantity = (
-            None if "unit_quantity" not in data else data["unit_quantity"]
-        )
-        items[new_id] = item
+        try:
+            item = ItemModel(**data)
+            print(item.unit_id)
+            print(item.unit_quantity)
+        except IntegrityError:
+            abort(400)
+        except SQLAlchemyError as sae:
+            print(sae)
+            abort(500)
         return item

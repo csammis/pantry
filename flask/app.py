@@ -5,7 +5,8 @@ Flask REST server for pantry
 import os
 from resources.unit import blp as UnitBlueprint
 from resources.location import blp as LocationBlueprint
-from db import db
+from resources.item import blp as ItemBlueprint
+from db import db, Base
 from flask_smorest import Api
 from flask import Flask
 
@@ -25,6 +26,7 @@ def create_app(db_url: str = None) -> Flask:
 
     api.register_blueprint(UnitBlueprint)
     api.register_blueprint(LocationBlueprint)
+    api.register_blueprint(ItemBlueprint)
 
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url or os.getenv(
         "DATABASE_URL", "sqlite:///data.db"
@@ -33,7 +35,7 @@ def create_app(db_url: str = None) -> Flask:
     db.init_app(app)
 
     with app.app_context():
-        db.create_all()
+        Base.metadata.create_all(db.engine)
 
     return app
 

@@ -1,17 +1,23 @@
-"""SQLAlchemy models for locations"""
-
 # pylint: disable=missing-class-docstring, too-few-public-methods, import-error
 
+import datetime as dt
+from typing import List
 import uuid
-from db import db
-from sqlalchemy import String, DateTime, Column, Boolean
+from db import Base, Id
+from sqlalchemy import UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
-class LocationModel(db.Model):
+class LocationModel(Base):
     __tablename__ = "location"
+    __table_args__ = (UniqueConstraint("name"),)
 
-    id: Column = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name: Column = Column(String(80), unique=True, nullable=False)
-    icon: Column = Column(String(80), nullable=True)
-    is_freezer: Column = Column(Boolean, default=False)
-    created_at: Column = Column(DateTime)
+    id: Mapped[Id] = mapped_column(primary_key=True, default=lambda: str(uuid.uuid4()))
+    name: Mapped[str]
+    icon: Mapped[str | None]
+    is_freezer: Mapped[bool]
+    created_at: Mapped[dt.datetime] = mapped_column(default=lambda: dt.datetime.now())
+
+    items: Mapped[List["ItemModel"]] = relationship(
+        back_populates="location", lazy="dynamic"
+    )
