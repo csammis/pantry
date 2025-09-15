@@ -1,4 +1,7 @@
-# pylint: disable=missing-class-docstring, too-few-public-methods, import-error
+"""sqlalchemy model of a Location"""
+
+# pylint: disable=missing-class-docstring, too-few-public-methods, import-error, unnecessary-lambda
+
 
 import datetime as dt
 from typing import List

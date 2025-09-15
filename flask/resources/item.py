@@ -5,7 +5,7 @@
 import datetime as dt
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from schemas import ItemSchema
+from schemas import ItemSchema, PlainItemSchema
 from db import db
 from models.item import ItemModel
 from flask.views import MethodView
@@ -18,7 +18,7 @@ class ItemEndpoint(MethodView):
     @classmethod
     def get_or_404(cls, item_id: str) -> ItemModel:
         """Get the specified Item or abort with a HTTP 404 error"""
-        item = db.session.query(ItemModel).filter(ItemModel.id == item_id).first()
+        item = db.session.query(ItemModel).filter(ItemModel.id == item_id)
         if not item:
             abort(404)
         return item
@@ -27,7 +27,7 @@ class ItemEndpoint(MethodView):
     def get(self, item_id):
         return ItemEndpoint.get_or_404(item_id)
 
-    @blp.arguments(ItemSchema)
+    @blp.arguments(PlainItemSchema)
     @blp.response(200, ItemSchema)
     def put(self, item_data, item_id):
         try:
@@ -66,13 +66,14 @@ class ItemListEndpoint(MethodView):
     def get(self):
         return db.session.query(ItemModel)
 
-    @blp.arguments(ItemSchema)
+    @blp.arguments(PlainItemSchema)
     @blp.response(201, ItemSchema)
     def post(self, data):
+        print(data)
         try:
             item = ItemModel(**data)
-            print(item.unit_id)
-            print(item.unit_quantity)
+            db.session.add(item)
+            db.session.commit()
         except IntegrityError:
             abort(400)
         except SQLAlchemyError as sae:

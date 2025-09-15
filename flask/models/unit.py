@@ -1,4 +1,6 @@
-# pylint: disable=missing-class-docstring, too-few-public-methods, import-error
+"""sqlalchemy model of a Unit"""
+
+# pylint: disable=missing-class-docstring, too-few-public-methods, import-error, unnecessary-lambda
 
 import datetime as dt
 import uuid
