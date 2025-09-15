@@ -24,9 +24,17 @@ class LocationStore {
   }
 }
 
+let locationCache: Location[] = []
+
 export async function getLocations(): Promise<Location[]> {
-  const response = await fetch('/api/location')
-  return (await response.json()) as Location[]
+  if (locationCache.length == 0) {
+    const response = await fetch('/api/location')
+    await response.json().then(function (resp: Location[]) {
+      locationCache = resp
+      return resp
+    })
+  }
+  return locationCache
 }
 
 export async function getLocation(id: string): Promise<Location | undefined> {

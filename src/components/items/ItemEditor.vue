@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Item } from '@/models/item'
-import { Location } from '@/models/location'
+import { getLocations, Location } from '@/models/location'
 import LocationChip from '@/components/locations/LocationChip.vue'
 import { ref, useTemplateRef } from 'vue'
 
@@ -13,9 +13,9 @@ defineProps<{
 const emit = defineEmits(['onDismiss', 'onAccept', 'onAcceptContinue'])
 const locationSelectElement = useTemplateRef('location-select')
 
-// Force the location select change event before emitting the event to add an item.
-// This ensures the location ID is synchronized to the model if the user doesn't happen
-// to manually change it.
+/** Force the location select change event before emitting the event to add an item.
+This ensures the location ID is synchronized to the model if the user doesn't happen
+to manually change it. */
 function emitAddEvent(name: 'onAccept' | 'onAcceptContinue') {
   handleLocationSelectChange()
   emit(name)
@@ -24,6 +24,10 @@ function emitAddEvent(name: 'onAccept' | 'onAcceptContinue') {
 function handleLocationSelectChange() {
   model.value.location.id = (locationSelectElement.value as HTMLSelectElement).value || ''
 }
+
+getLocations().then(function (resource) {
+  locations.value = resource
+})
 </script>
 <template>
   <div class="content">

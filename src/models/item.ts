@@ -42,6 +42,11 @@ export async function getItems(): Promise<Item[]> {
   return (await response.json()) as Item[]
 }
 
+export async function getItem(id: string): Promise<Item | undefined> {
+  const response = await fetch('/api/item/' + id)
+  return (await response.json()) as Item
+}
+
 export function createBlankItem(): Item {
   return new Item('', '', createBlankLocation(), undefined, undefined)
 }
