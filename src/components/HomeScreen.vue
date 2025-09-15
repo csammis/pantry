@@ -62,12 +62,10 @@ onMounted(() => {
   } as IsotopeOptions
 
   iso = new Isotope(gridRecentlyAdded.value as HTMLElement, isoOptions)
-  console.log('onMounted')
 })
 
 getItems().then(function (resource) {
   items.value = resource
-  console.log('item promise layout')
   iso?.layout()
 })
 </script>
