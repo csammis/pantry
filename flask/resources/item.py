@@ -18,7 +18,7 @@ class ItemEndpoint(MethodView):
     @classmethod
     def get_or_404(cls, item_id: str) -> ItemModel:
         """Get the specified Item or abort with a HTTP 404 error"""
-        item = db.session.query(ItemModel).filter(ItemModel.id == item_id)
+        item = db.session.query(ItemModel).filter(ItemModel.id == item_id).first()
         if not item:
             abort(404)
         return item
