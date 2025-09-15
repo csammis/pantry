@@ -5,10 +5,17 @@ import LocationChip from '../locations/LocationChip.vue'
 import type { Unit } from '@/models/unit'
 import { makeSingularOrPlural } from '@/utilities/Pluralizer'
 
-defineProps<{ item: Item }>()
+const props = defineProps<{ item: Item }>()
+const emit = defineEmits<{
+  (e: 'onSelected', item: Item): void
+}>()
+
+function emitOnSelected() {
+  emit('onSelected', props.item)
+}
 
 function renderQuantity(unit?: Unit, quantity?: number): string {
-  if (unit === undefined && quantity === undefined) {
+  if (!unit && !quantity) {
     return ''
   }
   let name = 'item'
@@ -22,7 +29,7 @@ function renderQuantity(unit?: Unit, quantity?: number): string {
 }
 </script>
 <template>
-  <div class="item-card">
+  <div class="item-card" @click="emitOnSelected">
     <div class="item-card-name">{{ item.name }}</div>
     <div class="item-card-quantity">{{ renderQuantity(item.unit, item.unit_quantity) }}</div>
     <div class="item-card-location">in <LocationChip :location="item.location" /></div>
@@ -35,7 +42,9 @@ function renderQuantity(unit?: Unit, quantity?: number): string {
   border: solid 2px;
   border-radius: 5px;
   text-align: center;
+  cursor: pointer;
 }
+
 .item-card-name {
   font-weight: bold;
   font-size: larger;

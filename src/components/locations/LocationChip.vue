@@ -8,15 +8,18 @@ import * as MdiIconNS from '@mdi/js'
 defineProps<{ location: Location }>()
 
 function svgPathFromLocationIcon(icon: string): string {
-  const keyname = transformKebabCaseToMdiJs(icon)
-  const MdiIconAccess = MdiIconNS as any
-  return MdiIconAccess[keyname]
+  if (icon && icon.length > 0) {
+    const keyname = transformKebabCaseToMdiJs(icon)
+    const MdiIconAccess = MdiIconNS as any
+    return MdiIconAccess[keyname]
+  }
+  return ''
 }
 </script>
 <template>
   <span class="location-chip">
-    <svg-icon type="mdi" :path="svgPathFromLocationIcon(location.icon)" />
-    {{ location.name }}
+    <svg-icon type="mdi" :path="svgPathFromLocationIcon(location?.icon)" />
+    {{ location?.name }}
   </span>
 </template>
 <style lang="css" scoped>

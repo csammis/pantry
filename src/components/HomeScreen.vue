@@ -3,11 +3,57 @@ import Isotope from 'isotope-layout'
 import type { IsotopeOptions } from 'isotope-layout'
 import { useTemplateRef, onMounted, ref } from 'vue'
 import ItemCard from './items/ItemCard.vue'
-import { Item } from '@/models/item'
-import { Location } from '@/models/location'
-import { Unit } from '@/models/unit'
+import { Item, createBlankItem, getItems, storeItem } from '@/models/item'
+import NewItemDialog from '@/views/NewItemDialog.vue'
+import EditItemDialog from '@/views/EditItemDialog.vue'
+
+const newItem = ref<Item>(createBlankItem())
+const editItem = ref<Item>(createBlankItem())
+const items = ref<Item[]>([])
+const newItemDialogOpen = ref<boolean>(false)
+const editItemDialogOpen = ref<boolean>(false)
+
+let iso: Isotope
+
+function saveNewItemModel() {
+  storeItem(newItem.value).then(function (item) {
+    if (item) {
+      items.value.push(item)
+      iso?.layout()
+    }
+  })
+}
+
+function onAddNewItem() {
+  newItem.value = createBlankItem()
+  newItemDialogOpen.value = true
+}
+
+function onNewItemDismiss() {
+  newItemDialogOpen.value = false
+}
+
+function onNewItemAcceptContinue() {
+  saveNewItemModel()
+  onAddNewItem()
+}
+
+function onNewItemAccept() {
+  saveNewItemModel()
+  onNewItemDismiss()
+}
 
 const gridRecentlyAdded = useTemplateRef('gridRecentlyAdded')
+
+function onItemSelected(item: Item) {
+  console.log(item)
+  editItem.value = item
+  editItemDialogOpen.value = true
+}
+
+function onEditItemDismiss() {
+  editItemDialogOpen.value = false
+}
 
 onMounted(() => {
   const isoOptions = {
@@ -15,18 +61,15 @@ onMounted(() => {
     layoutMode: 'fitRows',
   } as IsotopeOptions
 
-  const iso = new Isotope(gridRecentlyAdded.value as HTMLElement, isoOptions)
+  iso = new Isotope(gridRecentlyAdded.value as HTMLElement, isoOptions)
+  console.log('onMounted')
 })
 
-const freezerLoc = new Location('1', 'Chest Freezer', 'snowflake', true)
-const fridgeLoc = new Location('2', 'Fridge', 'fridge', false)
-const loafUnit = new Unit('1', 'Loaf', 'Loaves')
-
-const items = ref<Item[]>([])
-items.value.push(new Item('1', 'Frozen Pizza', freezerLoc, undefined, 2))
-items.value.push(new Item('2', 'Bread', freezerLoc, loafUnit, 2))
-items.value.push(new Item('3', 'Butter', fridgeLoc, undefined, undefined))
-items.value.push(new Item('4', 'Bread', fridgeLoc, loafUnit, 1))
+getItems().then(function (resource) {
+  items.value = resource
+  console.log('item promise layout')
+  iso?.layout()
+})
 </script>
 <template>
   <div class="description">
@@ -35,8 +78,33 @@ items.value.push(new Item('4', 'Bread', fridgeLoc, loafUnit, 1))
   <div class="content">
     <h2>Recently Added</h2>
     <div class="grid" ref="gridRecentlyAdded">
-      <ItemCard v-for="item in items" :key="item.id" :item="item" />
+      <ItemCard
+        v-for="item in items"
+        :key="item.id"
+        :item="item"
+        v-on:on-selected="onItemSelected"
+      />
+    </div>
+    <div v-if="items.length == 0" class="empty">
+      No items yet! <a href="#" @click="onAddNewItem">You should add some.</a>
     </div>
   </div>
+
+  <NewItemDialog
+    :open="newItemDialogOpen"
+    v-model="newItem"
+    v-on:on-dismiss="onNewItemDismiss"
+    v-on:on-accept="onNewItemAccept"
+    v-on:on-accept-continue="onNewItemAcceptContinue"
+  />
+  <EditItemDialog
+    :open="editItemDialogOpen"
+    v-model="editItem"
+    v-on:on-dismiss="onEditItemDismiss"
+  />
 </template>
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+.grid {
+  width: 100%;
+}
+</style>

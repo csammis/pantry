@@ -56,3 +56,12 @@
   padding: 0px;
   border: 0px;
 }
+
+a {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+a:hover {
+  text-decoration: underline;
+}
