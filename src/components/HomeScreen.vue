@@ -50,7 +50,6 @@ function onNewItemAccept() {
 const gridRecentlyAdded = useTemplateRef('gridRecentlyAdded')
 
 function onItemSelected(item: Item) {
-  console.log(item)
   editItem.value = item
   editItemDialogOpen.value = true
 }
