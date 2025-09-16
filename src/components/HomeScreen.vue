@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Isotope from 'isotope-layout'
 import type { IsotopeOptions } from 'isotope-layout'
-import { useTemplateRef, onMounted, ref } from 'vue'
+import { useTemplateRef, onMounted, ref, nextTick } from 'vue'
 import ItemCard from './items/ItemCard.vue'
 import { Item, createBlankItem, getItems, storeItem } from '@/models/item'
 import NewItemDialog from '@/views/NewItemDialog.vue'
@@ -14,6 +14,10 @@ const newItemDialogOpen = ref<boolean>(false)
 const editItemDialogOpen = ref<boolean>(false)
 
 let iso: Isotope
+const isoOptions = {
+  itemSelector: '.item-card',
+  layoutMode: 'fitRows',
+} as IsotopeOptions
 
 function saveNewItemModel() {
   storeItem(newItem.value).then(function (item) {
@@ -56,17 +60,14 @@ function onEditItemDismiss() {
 }
 
 onMounted(() => {
-  const isoOptions = {
-    itemSelector: '.item-card',
-    layoutMode: 'fitRows',
-  } as IsotopeOptions
-
   iso = new Isotope(gridRecentlyAdded.value as HTMLElement, isoOptions)
 })
 
-getItems().then(function (resource) {
+getItems().then(async function (resource) {
   items.value = resource
-  iso?.layout()
+  await nextTick()
+  iso?.reloadItems()
+  iso?.arrange(isoOptions)
 })
 </script>
 <template>
