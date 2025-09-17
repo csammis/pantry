@@ -30,6 +30,9 @@ function onDismiss() {
 }
 
 const title: string = 'Edit Item'
+const updateButtonText: string = 'Update'
+const updateAnotherButtonText: string = ''
+const dismissButtonText: string = 'Cancel'
 </script>
 <template>
   <dialog
@@ -41,8 +44,10 @@ const title: string = 'Edit Item'
     <ItemEditor
       v-model="model"
       :title="title"
+      :accept-button-text="updateButtonText"
+      :accept-continue-button-text="updateAnotherButtonText"
+      :dismiss-button-text="dismissButtonText"
       v-on:on-accept="$emit('onAccept')"
-      v-on:on-accept-continue="$emit('onAcceptContinue')"
       v-on:on-dismiss="onDismiss"
     />
   </dialog>
@@ -54,5 +59,6 @@ dialog {
   border: 1px solid #888;
   padding: 1em 2em;
   margin: auto;
+  min-width: 30%;
 }
 </style>

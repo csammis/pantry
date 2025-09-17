@@ -7,8 +7,11 @@ import { ref, useTemplateRef } from 'vue'
 const locations = ref<Location[]>([])
 
 const model = defineModel<Item>({ required: true })
-defineProps<{
+const props = defineProps<{
   title: string
+  acceptButtonText: string
+  acceptContinueButtonText: string
+  dismissButtonText: string
 }>()
 const emit = defineEmits(['onDismiss', 'onAccept', 'onAcceptContinue'])
 const locationSelectElement = useTemplateRef('location-select')
@@ -36,29 +39,41 @@ getLocations().then(function (resource) {
       <div class="input-name">Item name</div>
       <div class="input-control"><input autofocus type="text" v-model="model.name" /></div>
     </div>
-    <div class="input-section">
-      <div class="input-name">Storage location</div>
-      <div class="input-control">
-        <select
-          ref="location-select"
-          @select="handleLocationSelectChange"
-          @input="handleLocationSelectChange"
-        >
-          <option
-            v-for="loc in locations"
-            :key="loc.id"
-            :value="loc.id"
-            :selected="loc.id == model.location.id"
+    <div class="input-section storage-location">
+      <div class="storage-source">
+        <div class="input-name">Stored in</div>
+        <div class="input-control">
+          <LocationChip :location="model.location" />
+        </div>
+      </div>
+      <div class="storage-destination">
+        <div class="input-name">Move to...</div>
+        <div class="input-control">
+          <select
+            ref="location-select"
+            @select="handleLocationSelectChange"
+            @input="handleLocationSelectChange"
           >
-            <LocationChip :location="loc" />
-          </option>
-        </select>
+            <option
+              v-for="loc in locations"
+              :key="loc.id"
+              :value="loc.id"
+              :selected="loc.id == model.location.id"
+            >
+              <LocationChip :location="loc" />
+            </option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="buttons">
-      <button @click="emitAddEvent('onAccept')">Add</button>
-      <button v-if="model.id !== ''" @click="emitAddEvent('onAcceptContinue')">Add Another</button>
-      <button value="cancel" formmethod="dialog" @click="$emit('onDismiss')">Cancel</button>
+      <button @click="emitAddEvent('onAccept')">{{ props.acceptButtonText }}</button>
+      <button v-if="model.id === ''" @click="emitAddEvent('onAcceptContinue')">
+        {{ props.acceptContinueButtonText }}
+      </button>
+      <button value="cancel" formmethod="dialog" @click="$emit('onDismiss')">
+        {{ props.dismissButtonText }}
+      </button>
     </div>
   </div>
 </template>
@@ -66,12 +81,6 @@ getLocations().then(function (resource) {
 .message {
   margin-top: 1em;
   margin-bottom: 0.5em;
-}
-
-.buttons {
-  text-align: center;
-  width: 100%;
-  margin-top: 1em;
 }
 
 .buttons > * {
@@ -92,5 +101,28 @@ select {
 
 input {
   width: 100%;
+}
+
+.storage-location {
+  display: flow-root;
+}
+
+.storage-source {
+  float: left;
+  width: 50%;
+  padding-right: 1em;
+}
+
+.storage-destination {
+  float: right;
+  width: 50%;
+  padding-left: 1em;
+}
+
+.buttons {
+  text-align: center;
+  width: 100%;
+  margin-top: 1em;
+  clear: both;
 }
 </style>
