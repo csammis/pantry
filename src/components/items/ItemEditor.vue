@@ -1,3 +1,11 @@
+<script lang="ts">
+/** Define the possible usages of the ItemEditor component.
+ * The styling of the component will change based on its mode. */
+export enum EditorMode {
+  Add,
+  Edit,
+}
+</script>
 <script setup lang="ts">
 import { Item } from '@/models/item'
 import { getLocations, Location } from '@/models/location'
@@ -12,6 +20,7 @@ const props = defineProps<{
   acceptButtonText: string
   acceptContinueButtonText: string
   dismissButtonText: string
+  mode: EditorMode
 }>()
 const emit = defineEmits(['onDismiss', 'onAccept', 'onAcceptContinue'])
 const locationSelectElement = useTemplateRef('location-select')
@@ -31,23 +40,35 @@ function handleLocationSelectChange() {
 getLocations().then(function (resource) {
   locations.value = resource
 })
+
+/** Switch styling based on the mode property */
+const storageDestinationClass = ref('')
+if (props.mode == EditorMode.Edit) {
+  storageDestinationClass.value = 'storage-location'
+} else {
+  storageDestinationClass.value = ''
+}
 </script>
 <template>
   <div class="content">
     <h2>{{ title }}</h2>
     <div class="input-section">
-      <div class="input-name">Item name</div>
-      <div class="input-control"><input autofocus type="text" v-model="model.name" /></div>
+      <div class="input-name">
+        <label for="edit-item-name">Item name</label>
+      </div>
+      <div class="input-control">
+        <input autofocus id="edit-item-name" type="text" v-model="model.name" />
+      </div>
     </div>
     <div class="input-section storage-location">
       <div class="storage-source">
         <div class="input-name">Stored in</div>
-        <div class="input-control">
+        <div v-if="model.id !== ''" class="input-control">
           <LocationChip :location="model.location" />
         </div>
       </div>
-      <div class="storage-destination">
-        <div class="input-name">Move to...</div>
+      <div :class="storageDestinationClass">
+        <div v-if="model.id !== ''" class="input-name">Move to...</div>
         <div class="input-control">
           <select
             ref="location-select"

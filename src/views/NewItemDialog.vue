@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTemplateRef, watch } from 'vue'
 import { type Item } from '@/models/item'
-import ItemEditor from '@/components/items/ItemEditor.vue'
+import ItemEditor, { EditorMode } from '@/components/items/ItemEditor.vue'
 
 defineEmits(['onDismiss', 'onAccept', 'onAcceptContinue'])
 const model = defineModel<Item>({ required: true })
@@ -20,6 +20,9 @@ watch(
 )
 
 const title: string = 'Add New Item'
+const addButtonText: string = 'Add'
+const addAnotherButtonText: string = 'Add Another'
+const dismissButtonText: string = 'Cancel'
 </script>
 <template>
   <dialog
@@ -30,9 +33,14 @@ const title: string = 'Add New Item'
   >
     <ItemEditor
       v-model="model"
+      :mode="EditorMode.Add"
       :title="title"
+      :accept-button-text="addButtonText"
+      :accept-continue-button-text="addAnotherButtonText"
+      :dismiss-button-text="dismissButtonText"
       v-on:on-accept="$emit('onAccept')"
       v-on:on-accept-continue="$emit('onAcceptContinue')"
+      v-on:on-dismiss="$emit('onDismiss')"
     />
   </dialog>
 </template>

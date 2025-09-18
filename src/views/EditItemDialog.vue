@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTemplateRef, watch } from 'vue'
 import { getItem, type Item } from '@/models/item'
-import ItemEditor from '@/components/items/ItemEditor.vue'
+import ItemEditor, { EditorMode } from '@/components/items/ItemEditor.vue'
 
 const emit = defineEmits(['onDismiss', 'onAccept', 'onAcceptContinue'])
 const model = defineModel<Item>({ required: true })
@@ -44,6 +44,7 @@ const dismissButtonText: string = 'Cancel'
     <ItemEditor
       v-model="model"
       :title="title"
+      :mode="EditorMode.Edit"
       :accept-button-text="updateButtonText"
       :accept-continue-button-text="updateAnotherButtonText"
       :dismiss-button-text="dismissButtonText"
