@@ -88,15 +88,23 @@ function showSettingsElement(navItem: NavMenuItem) {
 
 <style scoped>
 header {
-  font-size: 2em;
+  font-size: 3em;
   position: absolute;
-  top: 24px;
-  padding-left: 2em;
+  top: 0px;
+  margin: 0px;
+  /* These values line up with the hamburger menu I'm using */
+  line-height: 30px;
+  padding-top: 36px;
+  padding-left: 96px;
+  padding-bottom: 30px;
+  vertical-align: middle;
+  background-color: var(--color-banner);
+  width: 100%;
 }
 
 .main {
-  padding-left: 4em;
-  padding-top: 4em;
+  padding-left: 2em;
+  padding-top: 7em;
 }
 
 svg {
@@ -117,8 +125,8 @@ svg {
 
 .nav-menu-item > a,
 a:visited {
-  color: var(--color-text);
-  text-decoration: none;
+  color: var(--vt-teal-ligthen-5);
+  text-decoration: underline;
 }
 
 .indent1 {
