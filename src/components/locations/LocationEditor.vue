@@ -1,12 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import SvgIcon from '@jamescoyle/vue-icon'
-import {
-  mdiContentSaveOutline,
-  mdiCloseBoxOutline,
-  mdiSquareEditOutline,
-  mdiTrashCanOutline,
-} from '@mdi/js'
 import { Location } from '@/models/location'
 
 const emit = defineEmits<{
@@ -45,39 +38,36 @@ const locationIconFieldProp = 'location-icon-' + model.value.id
 const locationFreezerFieldProp = 'location-freezer-' + model.value.id
 </script>
 <template>
-  <div class="item-editor">
-    <input
-      type="text"
-      :name="locationNameFieldProp"
-      :disabled="!editing"
-      placeholder="Location name"
-      v-model="model.name"
-    />
-    <input
-      type="text"
-      :name="locationIconFieldProp"
-      :disabled="!editing"
-      placeholder="Icon (mdi:)"
-      v-model="model.icon"
-    />
-    <span><em>Freezer?</em></span>
-    <input
-      type="checkbox"
-      :name="locationFreezerFieldProp"
-      :disabled="!editing"
-      v-model="model.is_freezer"
-    />
-    <button v-if="editing" class="svg-button save-button" @click="saveItem">
-      <svg-icon type="mdi" :path="mdiContentSaveOutline" />
-    </button>
-    <button v-if="editing" class="svg-button cancel-button" @click="cancelItem">
-      <svg-icon type="mdi" :path="mdiCloseBoxOutline" />
-    </button>
-    <button v-if="!editing" class="svg-button edit-button" @click="updateEditState">
-      <svg-icon type="mdi" :path="mdiSquareEditOutline" />
-    </button>
-    <button v-if="!editing" class="svg-button delete-button" @click="deleteItem">
-      <svg-icon type="mdi" :path="mdiTrashCanOutline" />
-    </button>
-  </div>
+  <v-row dense>
+    <v-col>
+      <v-text-field
+        :name="locationNameFieldProp"
+        :disabled="!editing"
+        label="Location name"
+        v-model="model.name"
+      />
+    </v-col>
+    <v-col>
+      <v-text-field
+        :name="locationIconFieldProp"
+        :disabled="!editing"
+        label="Icon (mdi:)"
+        v-model="model.icon"
+      />
+    </v-col>
+    <v-col>
+      <v-checkbox
+        :name="locationFreezerFieldProp"
+        :disabled="!editing"
+        v-model="model.is_freezer"
+        label="Freezer?"
+      />
+    </v-col>
+    <v-col>
+      <v-btn v-if="editing" icon="mdi-content-save-outline" @click="saveItem" />
+      <v-btn v-if="editing" icon="mdi-close-box-outline" @click="cancelItem" />
+      <v-btn v-if="!editing" icon="mdi-square-edit-outline" @click="updateEditState"></v-btn>
+      <v-btn v-if="!editing" icon="mdi-trash-can-outline" @click="deleteItem"></v-btn>
+    </v-col>
+  </v-row>
 </template>

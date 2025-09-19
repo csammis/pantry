@@ -4,8 +4,6 @@ import UnitEditor from './UnitEditor.vue'
 import { Unit, createBlankUnit, deleteUnit, getUnit, getUnits, storeUnit } from '@/models/unit'
 import ConfirmDialog from '../ConfirmDialog.vue'
 import { ConfirmDialogOptions } from '../ConfirmDialog.vue'
-import SvgIcon from '@jamescoyle/vue-icon'
-import { mdiPlusOutline } from '@mdi/js'
 
 const units = ref<Unit[]>([])
 getUnits().then((response) => (units.value = response))
@@ -81,20 +79,22 @@ function onDelete(unit: Unit) {
       </li>
     </ul>
   </div>
-  <UnitEditor
-    v-for="(unit, index) in units"
-    :key="unit.id"
-    v-model="units[index]"
-    v-on:on-cancel="onCancel"
-    v-on:on-delete="onDelete"
-    v-on:on-save="onSave"
-  />
-  <div class="add-row">
-    <button class="svg-button create-button" @click="addNew">
-      <svg-icon type="mdi" :path="mdiPlusOutline" />
-    </button>
-    <span>Add new unit</span>
-  </div>
+  <v-container>
+    <UnitEditor
+      v-for="(unit, index) in units"
+      :key="unit.id"
+      v-model="units[index]"
+      v-on:on-cancel="onCancel"
+      v-on:on-delete="onDelete"
+      v-on:on-save="onSave"
+    />
+    <v-row>
+      <v-btn @click="addNew">
+        <v-icon icon="mdi-plus-outline" start></v-icon>
+        Add new unit
+      </v-btn>
+    </v-row>
+  </v-container>
   <ConfirmDialog
     :options="dialogOptions"
     v-on:on-accept="onDialogAccept"
@@ -104,11 +104,5 @@ function onDelete(unit: Unit) {
 <style lang="css" scoped>
 .description {
   margin-bottom: 2em;
-}
-
-.add-row > * {
-  margin-left: 0.5em;
-  display: inline-block;
-  vertical-align: middle;
 }
 </style>

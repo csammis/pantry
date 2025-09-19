@@ -18,11 +18,13 @@
   },
   "dependencies": {
     "@jamescoyle/vue-icon": "^0.1.2",
+    "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "@types/isotope-layout": "^3.0.15",
     "isotope-layout": "^3.0.6",
     "vue": "^3.5.18",
-    "vue3-burger-menu": "^1.1.1"
+    "vue3-burger-menu": "^1.1.1",
+    "vuetify": "^3.10.2"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",

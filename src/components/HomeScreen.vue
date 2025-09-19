@@ -72,6 +72,7 @@ getItems().then(async function (resource) {
 <template>
   <div class="description">
     Pantry is a lightweight application for tracking the food items which you have on hand.
+    <a href="#" @click="onAddNewItem">You should add some.</a>
   </div>
   <div class="content">
     <h2>

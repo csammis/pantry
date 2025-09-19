@@ -11,6 +11,7 @@ import { Item } from '@/models/item'
 import { getLocations, Location } from '@/models/location'
 import LocationChip from '@/components/locations/LocationChip.vue'
 import { ref, useTemplateRef } from 'vue'
+import { VBtn } from 'vuetify/components'
 
 const locations = ref<Location[]>([])
 
@@ -53,11 +54,14 @@ if (props.mode == EditorMode.Edit) {
   <div class="content">
     <h2>{{ title }}</h2>
     <div class="input-section">
-      <div class="input-name">
-        <label for="edit-item-name">Item name</label>
-      </div>
       <div class="input-control">
-        <input autofocus id="edit-item-name" type="text" v-model="model.name" />
+        <v-text-field
+          autofocus
+          id="edit-item-name"
+          label="Item name"
+          type="text"
+          v-model="model.name"
+        />
       </div>
     </div>
     <div class="input-section storage-location">
@@ -88,19 +92,15 @@ if (props.mode == EditorMode.Edit) {
       </div>
     </div>
     <div class="buttons">
-      <button class="accept-button" @click="emitAddEvent('onAccept')">
+      <v-btn @click="emitAddEvent('onAccept')">
         {{ props.acceptButtonText }}
-      </button>
-      <button
-        v-if="model.id === ''"
-        class="accept-button"
-        @click="emitAddEvent('onAcceptContinue')"
-      >
+      </v-btn>
+      <v-btn v-if="model.id === ''" class="accept-button" @click="emitAddEvent('onAcceptContinue')">
         {{ props.acceptContinueButtonText }}
-      </button>
-      <button value="cancel" formmethod="dialog" class="dismiss-button" @click="$emit('onDismiss')">
+      </v-btn>
+      <v-btn value="cancel" formmethod="dialog" class="dismiss-button" @click="$emit('onDismiss')">
         {{ props.dismissButtonText }}
-      </button>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -151,15 +151,5 @@ input {
   width: 100%;
   margin-top: 1em;
   clear: both;
-}
-
-button {
-  padding: 0.25em 0.5em;
-  border-radius: 9999px;
-  box-shadow: 0px 0px 3px 1px var(--vt-teal-darken-4);
-}
-
-button:hover {
-  box-shadow: 0px 0px 3px 1px var(--vt-teal-darken-2);
 }
 </style>

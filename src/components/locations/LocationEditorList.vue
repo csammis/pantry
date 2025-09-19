@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import SvgIcon from '@jamescoyle/vue-icon'
-import { mdiPlusOutline } from '@mdi/js'
 import LocationEditor from './LocationEditor.vue'
 import {
   Location,
@@ -86,20 +84,22 @@ function onDelete(location: Location) {
       <li><em>Freezer:</em> indicate if the location is freezer storage</li>
     </ul>
   </div>
-  <LocationEditor
-    v-for="(location, index) in locations"
-    :key="location.id"
-    v-model="locations[index]"
-    v-on:on-save="onSave"
-    v-on:on-cancel="onCancel"
-    v-on:on-delete="onDelete"
-  />
-  <div class="add-row">
-    <button class="svg-button create-button" @click="addNew">
-      <svg-icon type="mdi" :path="mdiPlusOutline" />
-    </button>
-    <span>Add new location</span>
-  </div>
+  <v-container>
+    <LocationEditor
+      v-for="(location, index) in locations"
+      :key="location.id"
+      v-model="locations[index]"
+      v-on:on-save="onSave"
+      v-on:on-cancel="onCancel"
+      v-on:on-delete="onDelete"
+    />
+    <v-row>
+      <v-btn @click="addNew">
+        <v-icon icon="mdi-plus-outline" start></v-icon>
+        Add new location
+      </v-btn>
+    </v-row>
+  </v-container>
   <ConfirmDialog
     :options="dialogOptions"
     v-on:on-accept="onDialogAccept"
@@ -109,11 +109,5 @@ function onDelete(location: Location) {
 <style lang="css" scoped>
 .description {
   margin-bottom: 2em;
-}
-
-.add-row > * {
-  margin-left: 0.5em;
-  display: inline-block;
-  vertical-align: middle;
 }
 </style>
