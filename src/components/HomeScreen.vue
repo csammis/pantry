@@ -74,10 +74,10 @@ getItems().then(async function (resource) {
     Pantry is a lightweight application for tracking the food items which you have on hand.
   </div>
   <div class="content">
-    <h2 v-if="items.length > 0">
-      <a href="#" @click="onAddNewItem">Add New Item</a>
+    <h2>
+      Recently Added Items
+      <span class="subheader">(<a href="#">view all</a>)</span>
     </h2>
-    <h2>Recently Added</h2>
     <div class="grid" ref="gridRecentlyAdded">
       <ItemCard
         v-for="item in items"
@@ -107,5 +107,9 @@ getItems().then(async function (resource) {
 <style lang="css" scoped>
 .grid {
   width: 100%;
+}
+
+.subheader {
+  font-size: smaller;
 }
 </style>

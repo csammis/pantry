@@ -88,11 +88,17 @@ if (props.mode == EditorMode.Edit) {
       </div>
     </div>
     <div class="buttons">
-      <button @click="emitAddEvent('onAccept')">{{ props.acceptButtonText }}</button>
-      <button v-if="model.id === ''" @click="emitAddEvent('onAcceptContinue')">
+      <button class="accept-button" @click="emitAddEvent('onAccept')">
+        {{ props.acceptButtonText }}
+      </button>
+      <button
+        v-if="model.id === ''"
+        class="accept-button"
+        @click="emitAddEvent('onAcceptContinue')"
+      >
         {{ props.acceptContinueButtonText }}
       </button>
-      <button value="cancel" formmethod="dialog" @click="$emit('onDismiss')">
+      <button value="cancel" formmethod="dialog" class="dismiss-button" @click="$emit('onDismiss')">
         {{ props.dismissButtonText }}
       </button>
     </div>
@@ -145,5 +151,15 @@ input {
   width: 100%;
   margin-top: 1em;
   clear: both;
+}
+
+button {
+  padding: 0.25em 0.5em;
+  border-radius: 9999px;
+  box-shadow: 0px 0px 3px 1px var(--vt-teal-darken-4);
+}
+
+button:hover {
+  box-shadow: 0px 0px 3px 1px var(--vt-teal-darken-2);
 }
 </style>
